@@ -26,7 +26,7 @@ namespace WebpApiAutores.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Autor>>> Get()
         {
-            return await _dbContext.autores.ToListAsync();
+            return await _dbContext.Autores.ToListAsync();
         }
 
         [HttpPost]
@@ -45,7 +45,7 @@ namespace WebpApiAutores.Controllers
                 return BadRequest("El id del autor no coincide con el de la URL");
             }
 
-            var existe = await _dbContext.autores.AnyAsync(x => x.id == id);
+            var existe = await _dbContext.Autores.AnyAsync(x => x.id == id);
 
             if (!existe)
             {
@@ -60,7 +60,7 @@ namespace WebpApiAutores.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var existe = await _dbContext.autores.AnyAsync(x => x.id == id);
+            var existe = await _dbContext.Autores.AnyAsync(x => x.id == id);
 
             if (!existe)
             {

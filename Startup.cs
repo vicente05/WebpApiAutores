@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 namespace WebpApiAutores
 {
@@ -28,7 +29,8 @@ namespace WebpApiAutores
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            object p = services.AddControllers().AddNewtonsoftJson(x =>
+                x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddDbContext<ApplicationDbcontext>(options =>
             {

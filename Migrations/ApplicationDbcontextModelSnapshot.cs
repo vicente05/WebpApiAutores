@@ -30,7 +30,43 @@ namespace WebpApiAutores.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("autores");
+                    b.ToTable("Autores");
+                });
+
+            modelBuilder.Entity("WebpApiAutores.Models.Libro", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("autor_id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("titulo")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("autor_id");
+
+                    b.ToTable("Libros");
+                });
+
+            modelBuilder.Entity("WebpApiAutores.Models.Libro", b =>
+                {
+                    b.HasOne("WebpApiAutores.Models.Autor", "autor")
+                        .WithMany("libros")
+                        .HasForeignKey("autor_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("autor");
+                });
+
+            modelBuilder.Entity("WebpApiAutores.Models.Autor", b =>
+                {
+                    b.Navigation("libros");
                 });
 #pragma warning restore 612, 618
         }
