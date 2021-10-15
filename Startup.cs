@@ -29,6 +29,8 @@ namespace WebpApiAutores
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddRouting(options => options.LowercaseUrls = true);
+
             object p = services.AddControllers().AddNewtonsoftJson(x =>
                 x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 

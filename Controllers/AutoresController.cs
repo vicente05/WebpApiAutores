@@ -10,13 +10,11 @@ namespace WebpApiAutores.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/autores")]
+    [Route("api/[controller]")]
     public class AutoresController : ControllerBase
     {
 
         private readonly ApplicationDbcontext _dbContext;
-
-
         public AutoresController(ApplicationDbcontext dbContext)
         {
             _dbContext = dbContext;
@@ -27,6 +25,38 @@ namespace WebpApiAutores.Controllers
         public async Task<ActionResult<List<Autor>>> Get()
         {
             return await _dbContext.Autores.ToListAsync();
+        }
+
+        [HttpGet("primero")]
+        public async Task<ActionResult<Autor>> GetFirst()
+        {
+            return await _dbContext.Autores.FirstOrDefaultAsync();
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Autor>> GetId(int id)
+        {
+            var autor = await _dbContext.Autores.FirstOrDefaultAsync(x => x.id == id);
+
+            if (autor == null)
+            {
+                return NotFound();
+            }
+
+            return autor;
+        }
+
+        [HttpGet("{nombre}")]
+        public async Task<ActionResult<Autor>> GetNombre(string nombre)
+        {
+            var autor = await _dbContext.Autores.FirstOrDefaultAsync(x => x.nombre.Contains(nombre));
+
+            if (autor == null)
+            {
+                return NotFound();
+            }
+
+            return autor;
         }
 
         [HttpPost]

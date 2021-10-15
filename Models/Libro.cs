@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebpApiAutores.Models
 {
+    [Table("libros")]
     public class Libro
     {
         public int id { get; set; }

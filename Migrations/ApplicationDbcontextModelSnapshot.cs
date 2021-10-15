@@ -30,7 +30,7 @@ namespace WebpApiAutores.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Autores");
+                    b.ToTable("autores");
                 });
 
             modelBuilder.Entity("WebpApiAutores.Models.Libro", b =>
@@ -50,7 +50,7 @@ namespace WebpApiAutores.Migrations
 
                     b.HasIndex("autor_id");
 
-                    b.ToTable("Libros");
+                    b.ToTable("libros");
                 });
 
             modelBuilder.Entity("WebpApiAutores.Models.Libro", b =>
