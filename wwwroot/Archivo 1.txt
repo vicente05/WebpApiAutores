@@ -1,0 +1,7 @@
+
+Proceso iniciado
+Proceso en ejecución: 31/10/2021 11:13:57
+Proceso en ejecución: 31/10/2021 11:14:02
+Proceso en ejecución: 31/10/2021 11:14:07
+Proceso en ejecución: 31/10/2021 11:14:12
+Proceso finalizado

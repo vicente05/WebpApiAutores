@@ -10,7 +10,7 @@ namespace WebpApiAutores.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/libros")]
+    [Route("libros")]
     public class LibrosController : ControllerBase
     {
 
@@ -26,16 +26,16 @@ namespace WebpApiAutores.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Libro>> Get(int id)
         {
-            return await _dbContext.Libros.Include(x => x.autor).FirstOrDefaultAsync(x => x.id == id);
+            return await _dbContext.Libros.FirstOrDefaultAsync(x => x.id == id);
         }
 
         [HttpPost]
         public async Task<ActionResult> Post(Libro libro)
         {
-            var existeAutor = await _dbContext.Autores.AnyAsync(x => x.id == libro.autor_id);
+            var existeAutor = await _dbContext.Autores.AnyAsync(x => x.id == libro.id);
             if (!existeAutor)
             {
-                string error = $"No existe el autor de id:{ libro.autor_id }";
+                string error = $"No existe el autor de id:{ libro.id }";
                 return base.BadRequest(error);
             }
 

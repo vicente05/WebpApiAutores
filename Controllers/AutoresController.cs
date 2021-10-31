@@ -1,36 +1,35 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebpApiAutores.Models;
-
+using DevExtreme.AspNet.Data;
+using System.Linq;
+using DevExtreme.AspNet.Data.ResponseModel;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using WebpApiAutores.Filtros;
+using System;
 
 namespace WebpApiAutores.Controllers
 {
     [ApiController]
-    [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("autores")]
     public class AutoresController : ControllerBase
     {
 
         private readonly ApplicationDbcontext _dbContext;
+
         public AutoresController(ApplicationDbcontext dbContext)
         {
-            _dbContext = dbContext;
+            this._dbContext = dbContext;
         }
-
 
         [HttpGet]
         public async Task<ActionResult<List<Autor>>> Get()
         {
             return await _dbContext.Autores.ToListAsync();
-        }
-
-        [HttpGet("primero")]
-        public async Task<ActionResult<Autor>> GetFirst()
-        {
-            return await _dbContext.Autores.FirstOrDefaultAsync();
         }
 
         [HttpGet("{id:int}")]
@@ -40,7 +39,7 @@ namespace WebpApiAutores.Controllers
 
             if (autor == null)
             {
-                return NotFound();
+                return NotFound("no se ha podido encontrar el autor");
             }
 
             return autor;
@@ -60,22 +59,25 @@ namespace WebpApiAutores.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Autor autor)
+        public async Task<ActionResult> Post([FromBody] Autor autor)
         {
+
+            var existeAutorConElMismoNombre = await _dbContext.Autores.AnyAsync(x => x.nombre == autor.nombre);
+
+            if (existeAutorConElMismoNombre)
+            {
+                return BadRequest($"Ya existe un autor con el nombre { autor.nombre }");
+            }
+
             _dbContext.Add(autor);
             await _dbContext.SaveChangesAsync();
             return Ok();
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(Autor autor, int id)
+        [HttpPut]
+        public async Task<ActionResult> Put(Autor autor)
         {
-            if (autor.id != id)
-            {
-                return BadRequest("El id del autor no coincide con el de la URL");
-            }
-
-            var existe = await _dbContext.Autores.AnyAsync(x => x.id == id);
+            var existe = await _dbContext.Autores.AnyAsync(x => x.id == autor.id);
 
             if (!existe)
             {
@@ -91,16 +93,51 @@ namespace WebpApiAutores.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             var existe = await _dbContext.Autores.AnyAsync(x => x.id == id);
-
             if (!existe)
             {
                 return NotFound();
             }
-
             _dbContext.Remove(new Autor() { id = id });
             await _dbContext.SaveChangesAsync();
             return Ok();
         }
+
+        #region otrasConsultas
+
+        //[HttpGet]
+        //[ResponseCache(Duration = 10)]
+        //public async Task<ActionResult<LoadResult>> Lista([FromQuery] DataSourceLoadOptions loadOptions)
+        //{
+        //    var autores = _dbContext.Autores.Select(x => new { x.nombre, x.id, prueba = "lalalala" });
+        //    loadOptions.PrimaryKey = new[] { "id" };
+        //    loadOptions.PaginateViaPrimaryKey = true;
+        //    return await DataSourceLoader.LoadAsync(autores, loadOptions);
+        //}
+
+        //[HttpDelete]
+        //public async Task<ActionResult> DeleteIds([FromQuery] int[] ids)
+        //{
+        //    using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        //    try
+        //    {
+        //        var existe = await _dbContext.Autores.Where(x => ids.Contains(x.id)).ToListAsync();
+        //        if (existe.Count == 0)
+        //        {
+        //            return NotFound();
+        //        }
+        //        _dbContext.Autores.RemoveRange(existe);
+        //        await _dbContext.SaveChangesAsync();
+        //        await transaction.CommitAsync();
+        //        return Ok(ids);
+        //    }
+        //    catch (System.Exception error)
+        //    {
+        //        await transaction.RollbackAsync();
+        //        return BadRequest(error.Message);
+        //    }
+        //}
+
+        #endregion otrasConsultas
 
 
     }
